@@ -1,7 +1,6 @@
 package ru.vudovenko.micro.planner.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,11 +36,8 @@ public class Stat {
     @Column(name = "uncompleted_total", updatable = false)
     private Long uncompletedTotal; // значение задается в триггере в БД
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "user_id", referencedColumnName = "id") // по каким полям связывать (foreign key)
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Override
     public boolean equals(Object o) {

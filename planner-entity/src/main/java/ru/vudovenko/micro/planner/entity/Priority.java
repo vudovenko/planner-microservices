@@ -1,6 +1,5 @@
 package ru.vudovenko.micro.planner.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cache;
@@ -31,10 +30,8 @@ public class Priority {
     private String title;
     private String color;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Override
     public boolean equals(Object o) {

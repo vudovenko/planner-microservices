@@ -1,7 +1,6 @@
 package ru.vudovenko.micro.planner.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cache;
@@ -48,10 +47,8 @@ public class Task {
     @JoinColumn(name = "category_id", referencedColumnName = "id") // по каким полям связывать (foreign key)
     private Category category;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id") // по каким полям связывать (foreign key)
-    private User user; // для какого пользователя задача
+    @Column(name = "user_id")
+    private Long userId;
 
     @Override
     public boolean equals(Object o) {
