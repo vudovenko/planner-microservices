@@ -1,2 +1,3 @@
 rootProject.name = 'planner-microservices'
 
+includeBuild('planner-server')

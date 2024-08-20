@@ -1,0 +1,15 @@
+server:
+  port: 8761
+
+# id приложения - желательно указывать всегда в микросервисных приложениях
+spring:
+  application:
+    name: planner-server
+  config:
+    # для считывания своего файла конфигурации
+    import: configserver:http://localhost:8888
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
