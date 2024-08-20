@@ -1,4 +1,4 @@
-package ru.vudovenko.micro.planner.entity;
+package ru.vudovenko.micro.planner;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
