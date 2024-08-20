@@ -1,0 +1,10 @@
+server:
+  port: 8765
+
+# id приложения - желательно указывать всегда в микросервисных приложениях
+spring:
+  application:
+    name: planner-gateway
+  config:
+    # для считывания своего файла конфигурации
+    import: configserver:http://localhost:8888
