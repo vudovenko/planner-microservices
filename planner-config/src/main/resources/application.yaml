@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: github-config-server
+  cloud:
+    config:
+      server:
+        git:
+          # доступ к git-репозиторию
+          uri: https://github.com/vudovenko/prop-test.git
+          # клонировать удаленный git-репозиторий в локальный git (чтобы не делать это вручную)
+          clone-on-start: true
+          # куда будет клонироваться удаленный репозиторий
+          basedir: file://c:/tmp/git-c
+          # логин и пароль для доступа к private репозиторию
+          username: vudovenko
+          password: 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
+          # явное уточнение названия ветки
+          default-label: main
+
+server:
+  port: 8888
+
+logging:
+  pattern:
+    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
