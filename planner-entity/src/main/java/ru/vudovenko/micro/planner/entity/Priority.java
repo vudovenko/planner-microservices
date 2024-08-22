@@ -12,7 +12,7 @@ import java.util.Objects;
  * может использовать для своих задач
  */
 @Entity
-@Table(name = "priority", schema = "todolist", catalog = "postgres")
+@Table(name = "priority", schema = "todo", catalog = "planner_todo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

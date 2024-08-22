@@ -14,7 +14,7 @@ import java.util.Set;
  * пользователь - основной объект, с которым связаны все остальные (через внешние ключи)
  */
 @Entity
-@Table(name = "user_data", schema = "todolist", catalog = "postgres")
+@Table(name = "user_data", schema = "users", catalog = "planner_users")
 @Setter
 @Getter
 @ToString(onlyExplicitlyIncluded = true)

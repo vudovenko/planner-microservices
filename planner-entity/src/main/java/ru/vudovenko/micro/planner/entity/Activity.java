@@ -14,7 +14,7 @@ import java.util.Objects;
  * Вся активность пользователя (активация аккаунта, другие действия по необходимости)
  */
 @Entity
-@Table(name = "activity", schema = "todolist", catalog = "postgres")
+@Table(name = "activity", schema = "todo", catalog = "planner_todo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

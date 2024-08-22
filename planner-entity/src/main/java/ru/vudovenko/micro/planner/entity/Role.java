@@ -13,7 +13,7 @@ import java.util.Set;
  * Все доступные роли, которые будут привязаны к пользователю
  */
 @Entity
-@Table(name = "role_data", schema = "todolist", catalog = "postgres")
+@Table(name = "role_data", schema = "users", catalog = "planner_users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

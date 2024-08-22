@@ -15,7 +15,7 @@ import java.util.Objects;
  * содержит статистику по каждой категории
  */
 @Entity
-@Table(name = "category", schema = "todolist", catalog = "postgres")
+@Table(name = "category", schema = "todo", catalog = "planner_todo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

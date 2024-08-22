@@ -13,7 +13,7 @@ import java.util.Objects;
  * задачи пользователя
  */
 @Entity
-@Table(name = "task", schema = "todolist", catalog = "postgres")
+@Table(name = "task", schema = "todo", catalog = "planner_todo")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
