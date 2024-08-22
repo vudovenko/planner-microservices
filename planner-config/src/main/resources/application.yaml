@@ -13,7 +13,7 @@ spring:
           basedir: file://c:/tmp/git-c
           # логин и пароль для доступа к private репозиторию
           username: vudovenko
-          password: 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
+          password: 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
           # явное уточнение названия ветки
           default-label: main
 

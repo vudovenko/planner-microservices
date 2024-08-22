@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'maven-publish'
 }
 
 group = 'ru.vudovenko.micro.planner'
@@ -21,6 +22,23 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+		}
+	}
 }
 
 dependencies {
