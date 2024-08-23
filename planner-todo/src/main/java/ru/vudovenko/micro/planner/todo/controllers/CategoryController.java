@@ -60,6 +60,13 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
+        try {
+            categoryService.findById(category.getId());
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity("category with id: " + category.getId() + " not found",
+                    HttpStatus.NOT_FOUND);
+        }
+
         categoryService.update(category);
 
         return new ResponseEntity(HttpStatus.OK);
