@@ -56,6 +56,10 @@ public class CategoryController {
                 .isUserExistingAsync(category.getUserId())
                 .subscribe(user -> System.out.println("user: " + user));
 
+        if (requestExchanger.isUserExisting(category.getUserId())) {
+            return ResponseEntity.ok(categoryService.add(category));
+        }
+
         return new ResponseEntity("user with id: " + category.getUserId() + " not found",
                 HttpStatus.NOT_ACCEPTABLE);
     }

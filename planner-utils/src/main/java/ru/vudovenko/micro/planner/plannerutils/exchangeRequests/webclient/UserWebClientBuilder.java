@@ -39,4 +39,17 @@ public class UserWebClientBuilder implements RequestExchanger {
 
         return userFlux;
     }
+
+    public Flux<Boolean> initUserData(Long userId) {
+
+
+        Flux<Boolean> booleanFlux = WebClient.create(baseUrlData)
+                .post()
+                .uri("init")
+                .bodyValue(userId)
+                .retrieve()
+                .bodyToFlux(Boolean.class);
+        return booleanFlux;
+
+    }
 }
