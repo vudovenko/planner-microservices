@@ -13,7 +13,7 @@ import org.springframework.util.StopWatch;
 @Log4j2
 public class LoggingAspect {
 
-    @Around("execution(* ru.vudovenko.micro.planner.todo.controllers..*(..)))")
+    @Around("execution(* ru.vudovenko.micro.planner.*.controllers..*(..)))")
     public Object profileControllerMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
