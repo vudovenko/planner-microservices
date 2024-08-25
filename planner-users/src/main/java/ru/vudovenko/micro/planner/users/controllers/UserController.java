@@ -12,6 +12,7 @@ import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -100,13 +101,13 @@ public class UserController {
 
     @PostMapping("/id")
     public ResponseEntity<?> findById(@RequestBody Long id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            return new ResponseEntity<>("User with id: " + id + " not found",
-                    HttpStatus.NOT_ACCEPTABLE);
+        Optional<User> user = userService.findById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
         }
 
-        return ResponseEntity.ok(user);
+        return new ResponseEntity<>("User with id: " + id + " not found",
+                HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PostMapping("/email")

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Priority;
+import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
 import ru.vudovenko.micro.planner.todo.search.PrioritySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.PriorityService;
 
@@ -17,6 +18,7 @@ import java.util.NoSuchElementException;
 public class PriorityController {
 
     private final PriorityService priorityService;
+    private final UserRestBuilder userRestBuilder;
 
     @PostMapping("/all")
     public List<Priority> findAll(@RequestBody Long userId) {
@@ -46,7 +48,12 @@ public class PriorityController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityService.add(priority));
+        if (userRestBuilder.isUserExisting(priority.getUserId())) {
+            return ResponseEntity.ok(priorityService.add(priority));
+        }
+
+        return new ResponseEntity("user with id: " + priority.getUserId() + " not found",
+                HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")

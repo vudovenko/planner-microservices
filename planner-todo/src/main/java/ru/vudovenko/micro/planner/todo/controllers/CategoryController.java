@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
+import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
 
@@ -23,6 +24,7 @@ import java.util.NoSuchElementException;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final UserRestBuilder userRestBuilder;
 
     @PostMapping("/all")
     public List<Category> findAll(@RequestBody Long userId) {
@@ -45,7 +47,12 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryService.add(category));
+        if (userRestBuilder.isUserExisting(category.getUserId())) {
+            return ResponseEntity.ok(categoryService.add(category));
+        }
+
+        return new ResponseEntity("user with id: " + category.getUserId() + " not found",
+                HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")

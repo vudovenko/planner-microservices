@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Task;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
 import ru.vudovenko.micro.planner.todo.search.TaskSearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.TaskService;
 
@@ -22,6 +23,7 @@ import java.util.NoSuchElementException;
 public class TaskController {
 
     private final TaskService taskService;
+    private final UserRestBuilder userRestBuilder;
 
     @PostMapping("/all")
     public ResponseEntity<List<Task>> findAll(@RequestBody Long userId) {
@@ -44,7 +46,12 @@ public class TaskController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(taskService.add(task));
+        if (userRestBuilder.isUserExisting(task.getUserId())) {
+            return ResponseEntity.ok(taskService.add(task));
+        }
+
+        return new ResponseEntity("user with id: " + task.getUserId() + " not found",
+                HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")
