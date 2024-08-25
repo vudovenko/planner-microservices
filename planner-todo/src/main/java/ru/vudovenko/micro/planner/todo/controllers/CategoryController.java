@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
 import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.restTemplate.UserRestBuilder;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.webclient.UserWebClientBuilder;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
 
@@ -27,6 +29,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     @Qualifier("userWebClient")
     private final RequestExchanger requestExchanger;
+    private final UserRestBuilder userRestBuilder;
 
     @PostMapping("/all")
     public List<Category> findAll(@RequestBody Long userId) {
@@ -49,9 +52,9 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (requestExchanger.isUserExisting(category.getUserId())) {
-            return ResponseEntity.ok(categoryService.add(category));
-        }
+        ((UserWebClientBuilder) requestExchanger)
+                .isUserExistingAsync(category.getUserId())
+                .subscribe(user -> System.out.println("user: " + user));
 
         return new ResponseEntity("user with id: " + category.getUserId() + " not found",
                 HttpStatus.NOT_ACCEPTABLE);

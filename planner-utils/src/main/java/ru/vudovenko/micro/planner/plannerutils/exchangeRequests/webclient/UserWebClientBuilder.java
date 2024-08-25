@@ -2,6 +2,7 @@ package ru.vudovenko.micro.planner.plannerutils.exchangeRequests.webclient;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 
@@ -16,12 +17,7 @@ public class UserWebClientBuilder implements RequestExchanger {
 
         try {
 
-            User user = WebClient.create(baseUrl)
-                    .post()
-                    .uri("id")
-                    .bodyValue(userId)
-                    .retrieve()
-                    .bodyToFlux(User.class)
+            User user = isUserExistingAsync(userId)
                     .blockFirst(); // блокирует поток до получения 1й записи
 
             return user != null;
@@ -31,5 +27,16 @@ public class UserWebClientBuilder implements RequestExchanger {
         }
 
         return false;
+    }
+
+    public Flux<User> isUserExistingAsync(Long userId) {
+        Flux<User> userFlux = WebClient.create(baseUrl)
+                .post()
+                .uri("id")
+                .bodyValue(userId)
+                .retrieve()
+                .bodyToFlux(User.class);
+
+        return userFlux;
     }
 }
