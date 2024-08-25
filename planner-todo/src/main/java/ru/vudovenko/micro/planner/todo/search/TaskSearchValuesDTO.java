@@ -7,8 +7,19 @@ import java.util.Date;
  * <p>
  * <i>такие же названия должны быть у объекта на frontend</i>
  */
-public record TaskSearchValuesDTO(String title, Integer completed, Long priorityId, Long categoryId, Long userId,
-                                  Date dateFrom, Date dateTo,
-                                  Integer pageNumber, Integer pageSize,
-                                  String sortColumn, String sortDirection) {
+public record TaskSearchValuesDTO(
+
+        String title,
+        Integer completed,
+        Long priorityId,
+        Long categoryId,
+        Long userId,
+        Date dateFrom,
+        Date dateTo,
+
+        Integer pageNumber,
+        Integer pageSize,
+
+        String sortColumn,
+        String sortDirection) {
 }
