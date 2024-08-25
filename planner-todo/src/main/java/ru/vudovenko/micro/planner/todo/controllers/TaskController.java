@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Task;
-import ru.vudovenko.micro.planner.todo.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
 import ru.vudovenko.micro.planner.todo.search.TaskSearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.TaskService;
 

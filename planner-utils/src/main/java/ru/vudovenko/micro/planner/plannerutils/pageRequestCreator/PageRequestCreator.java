@@ -1,4 +1,4 @@
-package ru.vudovenko.micro.planner.todo.pageRequestCreator;
+package ru.vudovenko.micro.planner.plannerutils.pageRequestCreator;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,3 +34,4 @@ public class PageRequestCreator {
         return result;
     }
 }
+
