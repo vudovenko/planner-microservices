@@ -1,11 +1,12 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Priority;
-import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 import ru.vudovenko.micro.planner.todo.search.PrioritySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.PriorityService;
 
@@ -18,7 +19,8 @@ import java.util.NoSuchElementException;
 public class PriorityController {
 
     private final PriorityService priorityService;
-    private final UserRestBuilder userRestBuilder;
+    @Qualifier("userWebClient")
+    private final RequestExchanger requestExchanger;
 
     @PostMapping("/all")
     public List<Priority> findAll(@RequestBody Long userId) {
@@ -48,7 +50,7 @@ public class PriorityController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.isUserExisting(priority.getUserId())) {
+        if (requestExchanger.isUserExisting(priority.getUserId())) {
             return ResponseEntity.ok(priorityService.add(priority));
         }
 

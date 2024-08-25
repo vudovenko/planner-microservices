@@ -1,4 +1,4 @@
-package ru.vudovenko.micro.planner.plannerutils.restTemplate;
+package ru.vudovenko.micro.planner.plannerutils.exchangeRequests.restTemplate;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -7,16 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.vudovenko.micro.planner.entity.User;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 
 /**
  * Специальный класс для вызова микросервисов пользователей
  */
-@Component
-public class UserRestBuilder {
+@Component("userRestBuilder")
+public class UserRestBuilder implements RequestExchanger {
 
-    private static final String baseUrl = "http://localhost:8765/planner-users/user/";
-
-    // проверка - существует ли пользователь
+    @Override
     public boolean isUserExisting(Long userId) {
 
         // для примера - как использовать RestTemplate (но он уже deprecated)

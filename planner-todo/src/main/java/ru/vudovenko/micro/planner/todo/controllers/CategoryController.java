@@ -1,11 +1,12 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
-import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
 
@@ -24,7 +25,8 @@ import java.util.NoSuchElementException;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final UserRestBuilder userRestBuilder;
+    @Qualifier("userWebClient")
+    private final RequestExchanger requestExchanger;
 
     @PostMapping("/all")
     public List<Category> findAll(@RequestBody Long userId) {
@@ -47,7 +49,7 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.isUserExisting(category.getUserId())) {
+        if (requestExchanger.isUserExisting(category.getUserId())) {
             return ResponseEntity.ok(categoryService.add(category));
         }
 

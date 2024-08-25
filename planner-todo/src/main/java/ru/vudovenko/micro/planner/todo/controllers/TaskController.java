@@ -1,14 +1,15 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Task;
+import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
-import ru.vudovenko.micro.planner.plannerutils.restTemplate.UserRestBuilder;
 import ru.vudovenko.micro.planner.todo.search.TaskSearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.TaskService;
 
@@ -23,7 +24,8 @@ import java.util.NoSuchElementException;
 public class TaskController {
 
     private final TaskService taskService;
-    private final UserRestBuilder userRestBuilder;
+    @Qualifier("userWebClient")
+    private final RequestExchanger requestExchanger;
 
     @PostMapping("/all")
     public ResponseEntity<List<Task>> findAll(@RequestBody Long userId) {
@@ -46,7 +48,7 @@ public class TaskController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.isUserExisting(task.getUserId())) {
+        if (requestExchanger.isUserExisting(task.getUserId())) {
             return ResponseEntity.ok(taskService.add(task));
         }
 
