@@ -41,8 +41,6 @@ public class UserWebClientBuilder implements RequestExchanger {
     }
 
     public Flux<Boolean> initUserData(Long userId) {
-
-
         Flux<Boolean> booleanFlux = WebClient.create(baseUrlData)
                 .post()
                 .uri("init")

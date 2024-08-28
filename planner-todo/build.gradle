@@ -25,6 +25,9 @@ ext {
 dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-feign:+'
+
+
 	implementation 'ru.vudovenko.micro.planner:planner-entity:0.0.1-SNAPSHOT'
 	implementation 'ru.vudovenko.micro.planner:planner-utils:0.0.1-SNAPSHOT'
 

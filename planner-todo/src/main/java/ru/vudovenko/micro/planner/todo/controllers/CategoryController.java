@@ -1,14 +1,11 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.restTemplate.UserRestBuilder;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.webclient.UserWebClientBuilder;
+import ru.vudovenko.micro.planner.todo.feign.UserFeignClient;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
 
@@ -27,9 +24,7 @@ import java.util.NoSuchElementException;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    @Qualifier("userWebClient")
-    private final RequestExchanger requestExchanger;
-    private final UserRestBuilder userRestBuilder;
+    private final UserFeignClient userFeignClient;
 
     @PostMapping("/all")
     public List<Category> findAll(@RequestBody Long userId) {
@@ -52,11 +47,7 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        ((UserWebClientBuilder) requestExchanger)
-                .isUserExistingAsync(category.getUserId())
-                .subscribe(user -> System.out.println("user: " + user));
-
-        if (requestExchanger.isUserExisting(category.getUserId())) {
+        if (userFeignClient.findUserById(category.getUserId()) != null) {
             return ResponseEntity.ok(categoryService.add(category));
         }
 
