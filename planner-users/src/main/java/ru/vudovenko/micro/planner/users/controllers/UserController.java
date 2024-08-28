@@ -120,7 +120,7 @@ public class UserController {
         }
 
         return new ResponseEntity<>("User with id: " + id + " not found",
-                HttpStatus.NOT_ACCEPTABLE);
+                HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/email")

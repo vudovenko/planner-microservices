@@ -1,10 +1,12 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
+import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.todo.feign.UserFeignClient;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
@@ -23,8 +25,9 @@ import java.util.NoSuchElementException;
 @RequestMapping("/category")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Qualifier("ru.vudovenko.micro.planner.todo.feign.UserFeignClient")
     private final UserFeignClient userFeignClient;
+    private final CategoryService categoryService;
 
     @PostMapping("/all")
     public List<Category> findAll(@RequestBody Long userId) {
@@ -47,12 +50,18 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userFeignClient.findUserById(category.getUserId()) != null) {
-            return ResponseEntity.ok(categoryService.add(category));
-        }
+        ResponseEntity<User> userResponseEntity = userFeignClient.findUserById(category.getUserId());
 
-        return new ResponseEntity("user with id: " + category.getUserId() + " not found",
-                HttpStatus.NOT_ACCEPTABLE);
+        if (userResponseEntity.getBody() == null) {
+            if (userResponseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
+                return new ResponseEntity("user with id: " + category.getUserId() + " not found",
+                        HttpStatus.NOT_ACCEPTABLE);
+            } else {
+                return new ResponseEntity("Система пользователей недоступна, попробуйте позже",
+                        HttpStatus.SERVICE_UNAVAILABLE);
+            }
+        }
+        return ResponseEntity.ok(categoryService.add(category));
     }
 
     @PutMapping("/update")
