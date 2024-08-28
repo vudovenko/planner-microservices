@@ -32,6 +32,8 @@ dependencies {
 	implementation 'ru.vudovenko.micro.planner:planner-entity:0.0.1-SNAPSHOT'
 	implementation 'ru.vudovenko.micro.planner:planner-utils:0.0.1-SNAPSHOT'
 
+    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit'
+
 	// стартеры SpringBoot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
