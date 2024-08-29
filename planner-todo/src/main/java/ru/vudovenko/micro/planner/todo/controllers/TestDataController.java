@@ -20,7 +20,6 @@ public class TestDataController {
 
     @PostMapping("/init")
     public ResponseEntity<Boolean> init(@RequestBody Long userId) {
-
         testDataService.initTestData(userId);
 
         // если пользователя НЕ существует

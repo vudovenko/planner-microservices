@@ -1,9 +1,7 @@
 package ru.vudovenko.micro.planner.todo.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.vudovenko.micro.planner.entity.Category;
 import ru.vudovenko.micro.planner.entity.Priority;
 import ru.vudovenko.micro.planner.entity.Task;
@@ -19,7 +17,7 @@ public class TestDataService {
     private final PriorityService priorityService;
     private final CategoryService categoryService;
 
-    public ResponseEntity<Boolean> initTestData(@RequestBody Long userId) {
+    public void initTestData(Long userId) {
         Priority prior1 = createPriority("Важный", "#fff", userId);
         Priority prior2 = createPriority("Неважный", "#ffе", userId);
 
@@ -40,9 +38,6 @@ public class TestDataService {
 
         taskService.add(task1);
         taskService.add(task2);
-
-        // если пользователя НЕ существует
-        return ResponseEntity.ok(true);
     }
 
     private Priority createPriority(String title, String color, Long userId) {

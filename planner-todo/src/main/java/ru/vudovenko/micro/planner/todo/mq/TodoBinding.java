@@ -1,6 +1,6 @@
 package ru.vudovenko.micro.planner.todo.mq;
 
-import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.messaging.MessageChannel;
 
 /**
@@ -18,6 +18,6 @@ public interface TodoBinding {
      *
      * @return канал для получения сообщений
      */
-    @Output(INPUT_CHANNEL)
+    @Input(INPUT_CHANNEL)
     MessageChannel todoInputChannel();
 }

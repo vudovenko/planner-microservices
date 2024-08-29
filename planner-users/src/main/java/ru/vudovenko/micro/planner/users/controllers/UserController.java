@@ -51,7 +51,7 @@ public class UserController {
             messageProducer.initUserData(user.getId());
         }
 
-        return ResponseEntity.ok(userService.add(user));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/update")
