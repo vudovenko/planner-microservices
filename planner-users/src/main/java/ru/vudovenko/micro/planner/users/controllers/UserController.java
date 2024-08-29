@@ -1,16 +1,14 @@
 package ru.vudovenko.micro.planner.users.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.User;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.webclient.UserWebClientBuilder;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.users.mq.MessageProducer;
 import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
@@ -23,8 +21,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    @Qualifier("userWebClient")
-    private final RequestExchanger requestExchanger;
+    private final MessageProducer messageProducer;
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody User user) {
@@ -51,9 +48,7 @@ public class UserController {
         user = userService.add(user);
 
         if (user != null) {
-            ((UserWebClientBuilder) requestExchanger)
-                    .initUserData(user.getId())
-                    .subscribe(booleanFlux -> System.out.println("user populated: " + booleanFlux));
+            messageProducer.initUserData(user.getId());
         }
 
         return ResponseEntity.ok(userService.add(user));
