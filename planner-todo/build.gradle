@@ -28,12 +28,10 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-feign:+'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
 
-
 	implementation 'ru.vudovenko.micro.planner:planner-entity:0.0.1-SNAPSHOT'
 	implementation 'ru.vudovenko.micro.planner:planner-utils:0.0.1-SNAPSHOT'
 
-    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
-	implementation 'org.springframework.cloud:spring-cloud-stream:3.2.4'
+	implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
 
 	// стартеры SpringBoot
 	implementation 'org.springframework.boot:spring-boot-starter-web'

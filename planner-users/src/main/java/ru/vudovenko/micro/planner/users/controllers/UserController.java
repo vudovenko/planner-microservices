@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.users.mq.func.MessageFuncActions;
 import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-//    private final MessageProducer messageProducer;
+    private final MessageFuncActions messageFuncActions;
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody User user) {
@@ -46,9 +47,9 @@ public class UserController {
 
         user = userService.add(user);
 
-//        if (user != null) {
-//            messageProducer.initUserData(user.getId());
-//        }
+        if (user != null) {
+            messageFuncActions.sendNewUserMessage(user.getId());
+        }
 
         return ResponseEntity.ok(user);
     }
