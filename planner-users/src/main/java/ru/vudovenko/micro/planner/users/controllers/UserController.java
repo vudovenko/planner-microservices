@@ -5,10 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
-import ru.vudovenko.micro.planner.users.mq.func.MessageFuncActions;
 import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
@@ -20,8 +20,10 @@ import java.util.Optional;
 @RequestMapping("/user")
 public class UserController {
 
+    private static final String TOPIC_NAME = "vudovenko-topic";
+
     private final UserService userService;
-    private final MessageFuncActions messageFuncActions;
+    private final KafkaTemplate<String, Long> kafkaTemplate;
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody User user) {
@@ -48,7 +50,7 @@ public class UserController {
         user = userService.add(user);
 
         if (user != null) {
-            messageFuncActions.sendNewUserMessage(user.getId());
+            kafkaTemplate.send(TOPIC_NAME, user.getId());
         }
 
         return ResponseEntity.ok(user);

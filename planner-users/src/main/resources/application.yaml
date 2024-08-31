@@ -5,4 +5,4 @@ spring:
     # для считывания своего файла конфигурации
     import: configserver:http://localhost:8888
   profiles:
-    active: micro, users, utils, logging, rabbit
+    active: micro, users, utils, logging, kafka

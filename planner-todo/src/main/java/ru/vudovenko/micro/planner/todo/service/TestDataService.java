@@ -1,6 +1,8 @@
 package ru.vudovenko.micro.planner.todo.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.vudovenko.micro.planner.entity.Category;
 import ru.vudovenko.micro.planner.entity.Priority;
@@ -9,6 +11,7 @@ import ru.vudovenko.micro.planner.entity.Task;
 import java.util.Calendar;
 import java.util.Date;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class TestDataService {
@@ -16,6 +19,12 @@ public class TestDataService {
     private final TaskService taskService;
     private final PriorityService priorityService;
     private final CategoryService categoryService;
+
+    @KafkaListener(topics = "vudovenko-topic")
+    public void listenKafka(Long userId) {
+        log.info("new userId: {}", userId);
+        initTestData(userId);
+    }
 
     public void initTestData(Long userId) {
         Priority prior1 = createPriority("Важный", "#fff", userId);
