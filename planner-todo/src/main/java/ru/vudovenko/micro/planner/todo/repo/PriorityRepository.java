@@ -15,7 +15,7 @@ public interface PriorityRepository extends JpaRepository<Priority, Long> {
             and p.userId = :userId
             order by p.title asc
             """)
-    List<Priority> findByTitle(@Param("title") String title, @Param("userId") Long userId);
+    List<Priority> findByTitle(@Param("title") String title, @Param("userId") String userId);
 
     /**
      * Поиск приоритетов пользователя по почте в порядке возрастания id
@@ -23,5 +23,5 @@ public interface PriorityRepository extends JpaRepository<Priority, Long> {
      * @param userId идентификатор пользователя
      * @return список приоритетов пользователя
      */
-    List<Priority> findByUserIdOrderByIdAsc(Long userId);
+    List<Priority> findByUserIdOrderByIdAsc(String userId);
 }

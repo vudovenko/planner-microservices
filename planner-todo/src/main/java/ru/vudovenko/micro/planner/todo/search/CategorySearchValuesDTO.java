@@ -15,5 +15,5 @@ import lombok.Setter;
 public class CategorySearchValuesDTO {
 
     private String title;
-    private Long userId;
+    private String userId;
 }

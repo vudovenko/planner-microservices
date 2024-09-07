@@ -22,5 +22,5 @@ public interface StatRepository extends CrudRepository<Stat, Long> {
      * @param userId идентификатор пользователя
      * @return статистика пользователя
      */
-    Optional<Stat> findByUserId(Long userId);
+    Optional<Stat> findByUserId(String userId);
 }

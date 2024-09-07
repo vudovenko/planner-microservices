@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Task;
 import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
@@ -28,12 +30,15 @@ public class TaskController {
     private final RequestExchanger requestExchanger;
 
     @PostMapping("/all")
-    public ResponseEntity<List<Task>> findAll(@RequestBody Long userId) {
+    public ResponseEntity<List<Task>> findAll(@RequestBody String userId) {
         return ResponseEntity.ok(taskService.findAll(userId));
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Task> add(@RequestBody Task task) {
+    public ResponseEntity<Task> add(@RequestBody Task task,
+                                    @AuthenticationPrincipal Jwt jwt) {
+        // UUID пользователя из KeyCloak
+        task.setUserId(jwt.getSubject());
 
         // проверка на обязательные параметры
         if (task.getId() != null && task.getId() != 0) {
@@ -48,12 +53,12 @@ public class TaskController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (requestExchanger.isUserExisting(task.getUserId())) {
-            return ResponseEntity.ok(taskService.add(task));
+        if (task.getUserId().isBlank()) {
+            return new ResponseEntity("missed param: userId MUST be not null",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity("user with id: " + task.getUserId() + " not found",
-                HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.ok(taskService.add(task));
     }
 
     @PutMapping("/update")
@@ -98,14 +103,15 @@ public class TaskController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValuesDTO taskSearchValuesDTO) {
-        if (taskSearchValuesDTO.userId() == null || taskSearchValuesDTO.userId() == 0) {
+    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValuesDTO taskSearchValuesDto,
+                                             @AuthenticationPrincipal Jwt jwt) {
+        if (jwt.getSubject().isBlank()) {
             return new ResponseEntity("missed param: user Id",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        Boolean isCompleted = taskSearchValuesDTO.completed() != null
-                && taskSearchValuesDTO.completed() == 1;
+        Boolean isCompleted = taskSearchValuesDto.completed() != null
+                && taskSearchValuesDto.completed() == 1;
 
         // чтобы захватить в выборке все задачи по датам,
         // независимо от времени - можно выставить время с 00:00 до 23:59
@@ -113,9 +119,9 @@ public class TaskController {
         Date dateTo = null;
 
         // выставить 00:00 для начальной даты (если она указана)
-        if (taskSearchValuesDTO.dateFrom() != null) {
+        if (taskSearchValuesDto.dateFrom() != null) {
             Calendar calendarFrom = Calendar.getInstance();
-            calendarFrom.setTime(taskSearchValuesDTO.dateFrom());
+            calendarFrom.setTime(taskSearchValuesDto.dateFrom());
             calendarFrom.set(Calendar.HOUR_OF_DAY, 0);
             calendarFrom.set(Calendar.MINUTE, 0);
             calendarFrom.set(Calendar.SECOND, 0);
@@ -125,10 +131,10 @@ public class TaskController {
         }
 
         // выставить 23:59 для конечной даты (если она указана)
-        if (taskSearchValuesDTO.dateTo() != null) {
+        if (taskSearchValuesDto.dateTo() != null) {
 
             Calendar calendarTo = Calendar.getInstance();
-            calendarTo.setTime(taskSearchValuesDTO.dateTo());
+            calendarTo.setTime(taskSearchValuesDto.dateTo());
             calendarTo.set(Calendar.HOUR_OF_DAY, 23);
             calendarTo.set(Calendar.MINUTE, 59);
             calendarTo.set(Calendar.SECOND, 59);
@@ -137,15 +143,22 @@ public class TaskController {
             dateTo = calendarTo.getTime(); // записываем конечную дату с 23:59
         }
 
-        PageRequest pageRequest = PageRequestCreator.createPageRequest(taskSearchValuesDTO.pageNumber(),
-                taskSearchValuesDTO.pageSize(),
-                taskSearchValuesDTO.sortDirection(),
-                taskSearchValuesDTO.sortColumn());
+        PageRequest pageRequest = PageRequestCreator.createPageRequest(taskSearchValuesDto.pageNumber(),
+                taskSearchValuesDto.pageSize(),
+                taskSearchValuesDto.sortDirection(),
+                taskSearchValuesDto.sortColumn());
 
         // результат запроса с постраничным выводом
-        Page<Task> result = taskService.findByParams(taskSearchValuesDTO.title(), isCompleted,
-                taskSearchValuesDTO.priorityId(), taskSearchValuesDTO.categoryId(), taskSearchValuesDTO.userId(),
-                dateFrom, dateTo, pageRequest);
+        Page<Task> result = taskService
+                .findByParams(
+                        taskSearchValuesDto.title(),
+                        isCompleted,
+                        taskSearchValuesDto.priorityId(),
+                        taskSearchValuesDto.categoryId(),
+                        jwt.getSubject(),
+                        dateFrom,
+                        dateTo,
+                        pageRequest);
 
         // результат запроса
         return ResponseEntity.ok(result);

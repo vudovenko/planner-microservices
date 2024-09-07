@@ -15,7 +15,7 @@ public class PriorityService {
 
     private final PriorityRepository repository;
 
-    public List<Priority> findAll(Long userId) {
+    public List<Priority> findAll(String userId) {
         return repository.findByUserIdOrderByIdAsc(userId);
     }
 
@@ -35,7 +35,7 @@ public class PriorityService {
         return repository.findById(id).orElseThrow();
     }
 
-    public List<Priority> findByTitle(String title, Long userId) {
+    public List<Priority> findByTitle(String title, String userId) {
         return repository.findByTitle(title, userId);
     }
 }

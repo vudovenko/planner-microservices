@@ -13,7 +13,7 @@ public class StatService {
 
     private final StatRepository repository;
 
-    public Stat findStatByUserId(Long userId) {
+    public Stat findStatByUserId(String userId) {
         return repository.findByUserId(userId).orElseThrow();
     }
 }

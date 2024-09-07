@@ -21,11 +21,11 @@ public class CategoryService {
         return repository.findById(id).orElseThrow();
     }
 
-    public List<Category> findByTitle(String title, Long userId) {
+    public List<Category> findByTitle(String title, String userId) {
         return repository.findByTitle(title, userId);
     }
 
-    public List<Category> findAll(Long userId) {
+    public List<Category> findAll(String userId) {
         return repository.findByUserIdOrderByTitleAsc(userId);
     }
 

@@ -29,7 +29,7 @@ public class StatController {
     private final StatService statService;
 
     @PostMapping("/stat")
-    public ResponseEntity<Stat> findByEmail(@RequestBody Long userId) {
+    public ResponseEntity<Stat> findByEmail(@RequestBody String userId) {
         Stat stat;
         try {
             stat = statService.findStatByUserId(userId);

@@ -21,12 +21,12 @@ public class TestDataService {
     private final CategoryService categoryService;
 
     @KafkaListener(topics = "vudovenko-topic")
-    public void listenKafka(Long userId) {
+    public void listenKafka(String userId) {
         log.info("new userId: {}", userId);
         initTestData(userId);
     }
 
-    public void initTestData(Long userId) {
+    public void initTestData(String userId) {
         Priority prior1 = createPriority("Важный", "#fff", userId);
         Priority prior2 = createPriority("Неважный", "#ffе", userId);
 
@@ -49,7 +49,7 @@ public class TestDataService {
         taskService.add(task2);
     }
 
-    private Priority createPriority(String title, String color, Long userId) {
+    private Priority createPriority(String title, String color, String userId) {
         Priority priority = new Priority();
         priority.setTitle(title);
         priority.setColor(color);
@@ -57,7 +57,7 @@ public class TestDataService {
         return priority;
     }
 
-    private Category createCategory(String title, Long userId) {
+    private Category createCategory(String title, String userId) {
         Category category = new Category();
         category.setTitle(title);
         category.setUserId(userId);
@@ -71,7 +71,7 @@ public class TestDataService {
     }
 
     private Task createTask(String title, Category category, Priority priority,
-                            Boolean completed, Date taskDate, Long userId) {
+                            Boolean completed, Date taskDate, String userId) {
         Task task = new Task();
         task.setTitle(title);
         task.setCategory(category);

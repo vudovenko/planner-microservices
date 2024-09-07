@@ -35,7 +35,7 @@ public class Activity { // название таблицы будет брать
     private String uuid; // создается только один раз с помощью триггера в БД
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Override
     public boolean equals(Object o) {

@@ -37,7 +37,7 @@ public class Stat {
     private Long uncompletedTotal; // значение задается в триггере в БД
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Override
     public boolean equals(Object o) {

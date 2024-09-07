@@ -31,7 +31,7 @@ public class Priority {
     private String color;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Override
     public boolean equals(Object o) {

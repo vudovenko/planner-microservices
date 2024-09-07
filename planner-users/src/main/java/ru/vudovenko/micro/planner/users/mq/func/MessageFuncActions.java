@@ -21,7 +21,7 @@ public class MessageFuncActions {
 //     *
 //     * @param userId id пользователя
 //     */
-//    public void sendNewUserMessage(Long userId) {
+//    public void sendNewUserMessage(String userId) {
 //        messageFunc.getInnerBus()
 //                .emitNext(MessageBuilder.withPayload(userId).build(),
 //                        Sinks.EmitFailureHandler.FAIL_FAST);

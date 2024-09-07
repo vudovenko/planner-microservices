@@ -11,7 +11,7 @@ public class MessageProducer {
 //
 //    private final TodoBinding todoBinding;
 //
-//    public void initUserData(Long userId) {
+//    public void initUserData(String userId) {
 //        Message<Long> message = MessageBuilder.withPayload(userId).build();
 //
 //        todoBinding.todoOutputChannel().send(message);

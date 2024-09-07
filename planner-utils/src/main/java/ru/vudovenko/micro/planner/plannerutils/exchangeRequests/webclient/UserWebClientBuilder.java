@@ -13,7 +13,7 @@ import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.Reque
 public class UserWebClientBuilder implements RequestExchanger {
 
     @Override
-    public boolean isUserExisting(Long userId) {
+    public boolean isUserExisting(String userId) {
 
         try {
 
@@ -29,7 +29,7 @@ public class UserWebClientBuilder implements RequestExchanger {
         return false;
     }
 
-    public Flux<User> isUserExistingAsync(Long userId) {
+    public Flux<User> isUserExistingAsync(String userId) {
         Flux<User> userFlux = WebClient.create(baseUrl)
                 .post()
                 .uri("id")
@@ -40,7 +40,7 @@ public class UserWebClientBuilder implements RequestExchanger {
         return userFlux;
     }
 
-    public Flux<Boolean> initUserData(Long userId) {
+    public Flux<Boolean> initUserData(String userId) {
         Flux<Boolean> booleanFlux = WebClient.create(baseUrlData)
                 .post()
                 .uri("init")

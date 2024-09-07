@@ -1,13 +1,12 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Category;
-import ru.vudovenko.micro.planner.entity.User;
-import ru.vudovenko.micro.planner.todo.feign.UserFeignClient;
 import ru.vudovenko.micro.planner.todo.search.CategorySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.CategoryService;
 
@@ -25,22 +24,23 @@ import java.util.NoSuchElementException;
 @RequestMapping("/category")
 public class CategoryController {
 
-    @Qualifier("ru.vudovenko.micro.planner.todo.feign.UserFeignClient")
-    private final UserFeignClient userFeignClient;
     private final CategoryService categoryService;
 
     @PostMapping("/all")
-    public List<Category> findAll(@RequestBody Long userId) {
+    public List<Category> findAll(@RequestBody String userId) {
         return categoryService.findAll(userId);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Category> add(@RequestBody Category category) {
+    public ResponseEntity<Category> add(@RequestBody Category category,
+                                        @AuthenticationPrincipal Jwt jwt) {
+        // UUID пользователя из KeyCloak
+        category.setUserId(jwt.getSubject());
 
         // проверка на обязательные параметры
         if (category.getId() != null && category.getId() != 0) { // это означает, что id заполнено
             // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
-            return new ResponseEntity("redundant param: id MUST be null",
+            return new ResponseEntity("redundant param: category id MUST be null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -50,17 +50,11 @@ public class CategoryController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        ResponseEntity<User> userResponseEntity = userFeignClient.findUserById(category.getUserId());
-
-        if (userResponseEntity.getBody() == null) {
-            if (userResponseEntity.getStatusCode() == HttpStatus.NO_CONTENT) {
-                return new ResponseEntity("user with id: " + category.getUserId() + " not found",
-                        HttpStatus.NOT_ACCEPTABLE);
-            } else {
-                return new ResponseEntity("Система пользователей недоступна, попробуйте позже",
-                        HttpStatus.SERVICE_UNAVAILABLE);
-            }
+        if (category.getUserId().isBlank()) {
+            return new ResponseEntity("missed param: userId MUST be not null",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
+
         return ResponseEntity.ok(categoryService.add(category));
     }
 
@@ -101,8 +95,12 @@ public class CategoryController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValuesDTO categorySearchValuesDTO) {
-        if (categorySearchValuesDTO.getUserId() == null || categorySearchValuesDTO.getUserId() == 0) {
+    public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValuesDTO categorySearchValuesDTO,
+                                                 @AuthenticationPrincipal Jwt jwt) {
+        // UUID пользователя из KeyCloak
+        categorySearchValuesDTO.setUserId(jwt.getSubject());
+
+        if (categorySearchValuesDTO.getUserId().isBlank()) {
             return new ResponseEntity("missed param: userId MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }

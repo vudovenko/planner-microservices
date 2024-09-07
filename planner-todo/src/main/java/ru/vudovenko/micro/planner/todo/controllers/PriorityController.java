@@ -1,12 +1,12 @@
 package ru.vudovenko.micro.planner.todo.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.Priority;
-import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.RequestExchanger;
 import ru.vudovenko.micro.planner.todo.search.PrioritySearchValuesDTO;
 import ru.vudovenko.micro.planner.todo.service.PriorityService;
 
@@ -19,22 +19,23 @@ import java.util.NoSuchElementException;
 public class PriorityController {
 
     private final PriorityService priorityService;
-    @Qualifier("userWebClient")
-    private final RequestExchanger requestExchanger;
 
     @PostMapping("/all")
-    public List<Priority> findAll(@RequestBody Long userId) {
+    public List<Priority> findAll(@RequestBody String userId) {
         return priorityService.findAll(userId);
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<Priority> add(@RequestBody Priority priority) {
+    public ResponseEntity<Priority> add(@RequestBody Priority priority,
+                                        @AuthenticationPrincipal Jwt jwt) {
+        // UUID пользователя из KeyCloak
+        priority.setUserId(jwt.getSubject());
 
         // проверка на обязательные параметры
         if (priority.getId() != null && priority.getId() != 0) {
             // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
-            return new ResponseEntity("redundant param: id MUST be null",
+            return new ResponseEntity("redundant param: priority id MUST be null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -50,12 +51,12 @@ public class PriorityController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (requestExchanger.isUserExisting(priority.getUserId())) {
-            return ResponseEntity.ok(priorityService.add(priority));
+        if (priority.getUserId().isBlank()) {
+            return new ResponseEntity("missed param: userId MUST be not null",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity("user with id: " + priority.getUserId() + " not found",
-                HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.ok(priorityService.add(priority));
     }
 
     @PutMapping("/update")
@@ -118,16 +119,19 @@ public class PriorityController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValuesDTO prioritySearchValues) {
+    public ResponseEntity<List<Priority>> search(@RequestBody PrioritySearchValuesDTO prioritySearchValuesDto,
+                                                 @AuthenticationPrincipal Jwt jwt) {
+        // UUID пользователя из KeyCloak
+        prioritySearchValuesDto.setUserId(jwt.getSubject());
 
         // проверка на обязательные параметры
-        if (prioritySearchValues.getUserId() == null || prioritySearchValues.getUserId() == 0) {
+        if (prioritySearchValuesDto.getUserId().isBlank()) {
             return new ResponseEntity("missed param: user id MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
         List<Priority> priorities = priorityService
-                .findByTitle(prioritySearchValues.getTitle(), prioritySearchValues.getUserId());
+                .findByTitle(prioritySearchValuesDto.getTitle(), prioritySearchValuesDto.getUserId());
 
         return ResponseEntity.ok(priorities);
     }

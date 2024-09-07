@@ -16,11 +16,11 @@ import ru.vudovenko.micro.planner.plannerutils.exchangeRequests.interfaces.Reque
 public class UserRestBuilder implements RequestExchanger {
 
     @Override
-    public boolean isUserExisting(Long userId) {
+    public boolean isUserExisting(String userId) {
 
         // для примера - как использовать RestTemplate (но он уже deprecated)
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<Long> request = new HttpEntity<>(userId);
+        HttpEntity<String> request = new HttpEntity<>(userId);
 
         ResponseEntity<User> response;
         // если нужно получить объект - просто вызываете response.getBody() и произойдет автоматическая конвертация из JSON в POJO

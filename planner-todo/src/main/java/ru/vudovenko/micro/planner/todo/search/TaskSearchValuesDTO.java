@@ -13,7 +13,6 @@ public record TaskSearchValuesDTO(
         Integer completed,
         Long priorityId,
         Long categoryId,
-        Long userId,
         Date dateFrom,
         Date dateTo,
 

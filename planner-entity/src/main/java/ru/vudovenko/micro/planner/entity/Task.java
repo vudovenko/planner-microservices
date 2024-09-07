@@ -48,7 +48,7 @@ public class Task {
     private Category category;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Override
     public boolean equals(Object o) {
