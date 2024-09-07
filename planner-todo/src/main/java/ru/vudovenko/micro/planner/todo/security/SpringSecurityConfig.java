@@ -57,8 +57,7 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth // Используем новую форму записи
                         .requestMatchers("/test/login").permitAll() // анонимный пользователь сможет выполнять запросы только по этим URI
-                        .requestMatchers("/user/**").hasRole("user") // только админ может выполнять запросы по этим URI
-                        .requestMatchers("/admin/**").hasRole("admin")
+                        .requestMatchers("/category/*", "/priority/*", "task/*").hasRole("user") // только админ может выполнять запросы по этим URI
                         .anyRequest().authenticated() // остальной API будет доступен только аутентифицированным пользователям
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
