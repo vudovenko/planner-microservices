@@ -5,4 +5,4 @@ spring:
     # для считывания своего файла конфигурации
     import: configserver:http://localhost:8888
   profiles:
-    active: micro, todo, utils, logging, kafka
+    active: micro, todo, utils, logging, kafka, keycloak
