@@ -107,4 +107,14 @@ public class KeycloakUtils {
         // и добавляем ему Realm-роли (т.е. роль добавится в общий список Roles)
         uniqueUserResource.roles().realmLevel().add(kcRoles);
     }
+
+    public static Boolean deleteKeycloakUserById(String userId) {
+        try {
+            UserResource userResource = usersResource.get(userId);
+            userResource.remove();
+            return true;
+        } catch (javax.ws.rs.NotFoundException e) {
+            return false;
+        }
+    }
 }

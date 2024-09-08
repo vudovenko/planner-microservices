@@ -109,14 +109,10 @@ public class AdminController {
     }
 
     @PostMapping("/delete-by-id")
-    public ResponseEntity<?> deleteByUserId(@RequestBody Long id) {
-        try {
-            userService.deleteByUserId(id);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("User with id: " + id + " not found",
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
-        return ResponseEntity.ok(HttpStatus.OK);
+    public ResponseEntity<?> deleteByUserId(@RequestBody String userId) {
+        Boolean deleted = KeycloakUtils.deleteKeycloakUserById(userId);
+
+        return ResponseEntity.ok(deleted);
     }
 
     @PostMapping("/delete-by-email")
