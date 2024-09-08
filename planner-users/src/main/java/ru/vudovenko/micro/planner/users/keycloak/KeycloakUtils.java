@@ -11,6 +11,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.vudovenko.micro.planner.users.dto.KeycloakUserDto;
 import ru.vudovenko.micro.planner.users.dto.UserDTO;
 
 import javax.annotation.PostConstruct;
@@ -125,5 +126,18 @@ public class KeycloakUtils {
         } catch (javax.ws.rs.NotFoundException e) {
             return false;
         }
+    }
+
+    public static List<UserRepresentation> searchKeycloakUsers(KeycloakUserDto keycloakUserDto) {
+        int firstResult = keycloakUserDto.pageNumber() * keycloakUserDto.pageSize();
+
+        return usersResource
+                .searchByAttributes
+                        (
+                                firstResult,
+                                keycloakUserDto.pageSize(),
+                                true,
+                                false,
+                                keycloakUserDto.searchValue());
     }
 }

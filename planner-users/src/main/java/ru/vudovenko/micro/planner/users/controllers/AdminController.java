@@ -4,16 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.User;
-import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.users.dto.KeycloakUserDto;
 import ru.vudovenko.micro.planner.users.dto.UserDTO;
 import ru.vudovenko.micro.planner.users.keycloak.KeycloakUtils;
-import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
 import javax.ws.rs.core.Response;
@@ -152,18 +149,7 @@ public class AdminController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<Page<User>> search(@RequestBody UserSearchValuesDTO userSearchValuesDTO) {
-        PageRequest pageRequest = PageRequestCreator.createPageRequest(userSearchValuesDTO.pageNumber(),
-                userSearchValuesDTO.pageSize(),
-                userSearchValuesDTO.sortDirection(),
-                userSearchValuesDTO.sortColumn());
-
-        // результат запроса с постраничным выводом
-        Page<User> result = userService.findByParams(userSearchValuesDTO.email(),
-                userSearchValuesDTO.username(),
-                pageRequest);
-
-        // результат запроса
-        return ResponseEntity.ok(result);
+    public ResponseEntity<List<UserRepresentation>> search(@RequestBody KeycloakUserDto keycloakUserDto) {
+        return ResponseEntity.ok(KeycloakUtils.searchKeycloakUsers(keycloakUserDto));
     }
 }
