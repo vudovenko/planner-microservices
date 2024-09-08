@@ -16,6 +16,8 @@ import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -28,7 +30,9 @@ public class AdminController {
     private final UserService userService;
     private final KeycloakUtils keycloakUtils;
 
-    private static final int CONFLICT = 409; // если пользователь уже существует в KC и пытаемся создать такого же
+    private static final int CONFLICT = 409;
+    private static final String USER_ROLE_NAME = "user";
+    private static final String ADMIN_ROLE_NAME = "admin";
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody UserDTO user) {
@@ -62,6 +66,13 @@ public class AdminController {
         // получаем его ID
         String userId = CreatedResponseUtil.getCreatedId(response);
         log.info("Created user with id: {}", userId);
+
+        List<String> defaultRoles = new ArrayList<>();
+        // роли должны присутствовать в Keycloak на уровне Realm
+        defaultRoles.add(USER_ROLE_NAME);
+        defaultRoles.add(ADMIN_ROLE_NAME);
+
+        KeycloakUtils.addRoles(userId, defaultRoles);
 
         return ResponseEntity.status(response.getStatus()).build();
     }
