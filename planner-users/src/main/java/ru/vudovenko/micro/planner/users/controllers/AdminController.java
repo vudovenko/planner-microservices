@@ -5,13 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.plannerutils.pageRequestCreator.PageRequestCreator;
+import ru.vudovenko.micro.planner.users.dto.UserDTO;
+import ru.vudovenko.micro.planner.users.keycloak.KeycloakUtils;
 import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -20,40 +24,37 @@ import java.util.Optional;
 @RequestMapping("/admin/user")
 public class AdminController {
 
-    private static final String TOPIC_NAME = "vudovenko-topic";
-
     private final UserService userService;
-    private final KafkaTemplate<String, Long> kafkaTemplate;
+    private final KeycloakUtils keycloakUtils;
 
     @PostMapping("/add")
-    public ResponseEntity<?> add(@RequestBody User user) {
-        if (user.getId() != null && user.getId() != 0) {
-            return new ResponseEntity<>("redundant param MUST be null",
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
+    public ResponseEntity<?> add(@RequestBody UserDTO user) {
+//        if (!user.id().isEmpty()) {
+//            return new ResponseEntity<>("redundant param MUST be null",
+//                    HttpStatus.NOT_ACCEPTABLE);
+//        }
 
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+        if (user.email() == null || user.email().trim().isEmpty()) {
             return new ResponseEntity<>("missed param: email MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+        if (user.username() == null || user.username().trim().isEmpty()) {
             return new ResponseEntity<>("missed param: username MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+        if (user.password() == null || user.password().trim().isEmpty()) {
             return new ResponseEntity<>("missed param: password MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        user = userService.add(user);
+        List<String> roles = new ArrayList<>();
+        roles.add("user");
 
-        if (user != null) {
-            kafkaTemplate.send(TOPIC_NAME, user.getId());
-        }
+        Response response = keycloakUtils.createKeycloakUser(user);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.status(response.getStatus()).build();
     }
 
     @PutMapping("/update")

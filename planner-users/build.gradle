@@ -20,7 +20,7 @@ repositories {
 
 ext {
 	set('springCloudVersion', "2023.0.3")
-	set('keycloakVersion', "25.0.4")
+	set('keycloakVersion', "18.0.0")
 }
 
 dependencies {

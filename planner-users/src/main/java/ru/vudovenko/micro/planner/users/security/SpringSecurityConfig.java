@@ -56,8 +56,8 @@ public class SpringSecurityConfig {
         // все сетевые настройки
         http
                 .authorizeHttpRequests(auth -> auth // Используем новую форму записи
-                        .requestMatchers("/admin/*").hasRole("admin")
-                        .requestMatchers("/auth/*").hasRole("user")
+                        .requestMatchers("/admin/**").hasRole("admin")
+                        .requestMatchers("/auth/**").hasRole("user")
                         .anyRequest().authenticated() // остальной API будет доступен только аутентифицированным пользователям
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
