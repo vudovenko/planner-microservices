@@ -1,6 +1,8 @@
 package ru.vudovenko.micro.planner.users.controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.keycloak.admin.client.CreatedResponseUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -14,11 +16,10 @@ import ru.vudovenko.micro.planner.users.searchValues.UserSearchValuesDTO;
 import ru.vudovenko.micro.planner.users.service.UserService;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/user")
@@ -26,6 +27,8 @@ public class AdminController {
 
     private final UserService userService;
     private final KeycloakUtils keycloakUtils;
+
+    private static final int CONFLICT = 409; // если пользователь уже существует в KC и пытаемся создать такого же
 
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody UserDTO user) {
@@ -49,10 +52,16 @@ public class AdminController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        List<String> roles = new ArrayList<>();
-        roles.add("user");
-
         Response response = keycloakUtils.createKeycloakUser(user);
+
+        if (response.getStatus() == CONFLICT) {
+            return new ResponseEntity<>("User or email " + user.email() + " already exists",
+                    HttpStatus.CONFLICT);
+        }
+
+        // получаем его ID
+        String userId = CreatedResponseUtil.getCreatedId(response);
+        log.info("Created user with id: {}", userId);
 
         return ResponseEntity.status(response.getStatus()).build();
     }
