@@ -44,8 +44,8 @@ public class AdminController {
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.username() == null || user.username().trim().isEmpty()) {
-            return new ResponseEntity<>("missed param: username MUST be not null",
+        if (user.firstname() == null || user.firstname().trim().isEmpty()) {
+            return new ResponseEntity<>("missed param: firstname MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -76,33 +76,30 @@ public class AdminController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody User user) {
-        if (user.getId() == null || user.getId() == 0) {
-            return new ResponseEntity<>("missed param: id MUST be not null",
+    public ResponseEntity<?> update(@RequestBody UserDTO userDTO) {
+        if (userDTO.id().isBlank() || KeycloakUtils.getUserById(userDTO.id()).isEmpty()) {
+            return new ResponseEntity<>("missed param: id MUST be not null" +
+                    " or user with id: " + userDTO.id() + " not found",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+        if (userDTO.email() == null || userDTO.email().trim().isEmpty()) {
             return new ResponseEntity<>("missed param: email MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            return new ResponseEntity<>("missed param: username MUST be not null",
+        if (userDTO.firstname() == null || userDTO.firstname().trim().isEmpty()) {
+            return new ResponseEntity<>("missed param: firstname MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+        if (userDTO.password() == null || userDTO.password().trim().isEmpty()) {
             return new ResponseEntity<>("missed param: password MUST be not null",
                     HttpStatus.NOT_ACCEPTABLE);
         }
 
-        try {
-            userService.update(user);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity("User with id: " + user.getId() + " not found",
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
+        keycloakUtils.updateKeycloakUser(userDTO);
+
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

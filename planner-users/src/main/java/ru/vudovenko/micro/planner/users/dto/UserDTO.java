@@ -6,8 +6,9 @@ package ru.vudovenko.micro.planner.users.dto;
  */
 public record UserDTO(
         String id,
-        String email,
         String username,
+        String email,
+        String firstname,
         String password
 ) {
 }

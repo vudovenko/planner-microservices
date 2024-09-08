@@ -59,13 +59,10 @@ public class KeycloakUtils {
     }
 
     // создание пользователя для KC
-    public Response createKeycloakUser(UserDTO user) {
-        // Данные пароля - специальный объект-контейнер CredentialRepresentation
-        CredentialRepresentation credentialRepresentation
-                = createPasswordCredentials(user.password());
-        // данные пользователя (можете задавать или убирать любые поля - зависит от требуемого функционала)
-        // специальный объект-контейнер UserRepresentation
-        UserRepresentation kcUser = getUserRepresentation(user, credentialRepresentation);
+    public Response createKeycloakUser(UserDTO userDTO) {
+        UserRepresentation kcUser = userDtoToUserRepresentation(userDTO);
+        kcUser.setEnabled(true);
+        kcUser.setEmailVerified(false);
 
         // вызов KC (всю внутреннюю кухню за нас делает библиотека - формирует REST запросы, заполняет параметры и пр.)
         Response response = usersResource.create(kcUser);
@@ -73,14 +70,31 @@ public class KeycloakUtils {
         return response;
     }
 
+    public void updateKeycloakUser(UserDTO userDTO) {
+        UserRepresentation kcUser = userDtoToUserRepresentation(userDTO);
+
+        UserResource userResource = usersResource.get(userDTO.id());
+        userResource.update(kcUser);
+    }
+
+    private UserRepresentation userDtoToUserRepresentation(UserDTO user) {
+        // Данные пароля - специальный объект-контейнер CredentialRepresentation
+        CredentialRepresentation credentialRepresentation
+                = createPasswordCredentials(user.password());
+        // данные пользователя (можете задавать или убирать любые поля - зависит от требуемого функционала)
+        // специальный объект-контейнер UserRepresentation
+        UserRepresentation kcUser = getUserRepresentation(user, credentialRepresentation);
+        return kcUser;
+    }
+
     private static UserRepresentation getUserRepresentation(UserDTO user,
                                                             CredentialRepresentation credentialRepresentation) {
         UserRepresentation kcUser = new UserRepresentation();
         kcUser.setUsername(user.username());
-        kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
         kcUser.setEmail(user.email());
-        kcUser.setEnabled(true);
-        kcUser.setEmailVerified(false);
+        kcUser.setCredentials(Collections.singletonList(credentialRepresentation));
+        kcUser.setFirstName(user.firstname());
+
         return kcUser;
     }
 
