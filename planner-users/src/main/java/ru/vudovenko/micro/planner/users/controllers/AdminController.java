@@ -17,8 +17,8 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/admin/user")
+public class AdminController {
 
     private static final String TOPIC_NAME = "vudovenko-topic";
 
