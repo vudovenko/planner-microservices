@@ -3,6 +3,7 @@ package ru.vudovenko.micro.planner.users.controllers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -127,14 +128,15 @@ public class AdminController {
     }
 
     @PostMapping("/id")
-    public ResponseEntity<?> findById(@RequestBody Long id) {
-        Optional<User> user = userService.findById(id);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+    public ResponseEntity<?> findById(@RequestBody String id) {
+        Optional<UserRepresentation> userById = KeycloakUtils.getUserById(id);
+
+        if (userById.isEmpty()) {
+            return new ResponseEntity<>("User with id: " + id + " not found",
+                    HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity<>("User with id: " + id + " not found",
-                HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok(userById.get());
     }
 
     @PostMapping("/email")

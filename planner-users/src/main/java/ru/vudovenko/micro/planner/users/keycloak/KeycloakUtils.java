@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class KeycloakUtils {
@@ -106,6 +107,14 @@ public class KeycloakUtils {
 
         // и добавляем ему Realm-роли (т.е. роль добавится в общий список Roles)
         uniqueUserResource.roles().realmLevel().add(kcRoles);
+    }
+
+    public static Optional<UserRepresentation> getUserById(String userId) {
+        try {
+            return Optional.of(usersResource.get(userId).toRepresentation());
+        } catch (javax.ws.rs.NotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     public static Boolean deleteKeycloakUserById(String userId) {
