@@ -1,5 +1,9 @@
 package ru.vudovenko.micro.planner.users.security;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -32,6 +36,10 @@ import ru.vudovenko.micro.planner.plannerutils.oauth2.converter.KCRoleConverter;
 @Configuration // данный класс будет считан как конфиг для spring контейнера
 @EnableWebSecurity // включает механизм защиты адресов, которые настраиваются в SecurityFilterChain
 @EnableMethodSecurity() // включение механизма для защиты методов по ролям
+@EnableAutoConfiguration( // отключение авто конфигурации для подключения к БД
+        exclude = {DataSourceAutoConfiguration.class,
+                DataSourceTransactionManagerAutoConfiguration.class,
+                HibernateJpaAutoConfiguration.class})
 public class SpringSecurityConfig {
 
     /**

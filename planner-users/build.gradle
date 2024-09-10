@@ -35,18 +35,13 @@ dependencies {
 	// адаптер для Keycloak. Будет возможность на более высоком уровне вызывать методы API
 	implementation "org.keycloak:keycloak-admin-client:${keycloakVersion}"
 
-	implementation 'ru.vudovenko.micro.planner:planner-entity:0.0.1-SNAPSHOT'
 	implementation 'ru.vudovenko.micro.planner:planner-utils:0.0.1-SNAPSHOT'
 
 	implementation 'org.springframework.kafka:spring-kafka'
 
 	// стартеры SpringBoot
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
-
-	// Драйвер БД
-	runtimeOnly 'org.postgresql:postgresql'
 
 	//lombok
 	compileOnly 'org.projectlombok:lombok'

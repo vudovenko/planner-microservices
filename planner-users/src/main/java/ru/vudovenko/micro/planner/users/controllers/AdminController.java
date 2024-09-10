@@ -7,16 +7,13 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vudovenko.micro.planner.entity.User;
 import ru.vudovenko.micro.planner.users.dto.KeycloakUserDto;
 import ru.vudovenko.micro.planner.users.dto.UserDTO;
 import ru.vudovenko.micro.planner.users.keycloak.KeycloakUtils;
-import ru.vudovenko.micro.planner.users.service.UserService;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Log4j2
@@ -25,7 +22,6 @@ import java.util.Optional;
 @RequestMapping("/admin/user")
 public class AdminController {
 
-    private final UserService userService;
     private final KeycloakUtils keycloakUtils;
 
     private static final int CONFLICT = 409;
@@ -110,17 +106,6 @@ public class AdminController {
         return ResponseEntity.ok(deleted);
     }
 
-    @PostMapping("/delete-by-email")
-    public ResponseEntity<?> deleteByUserEmail(@RequestBody String email) {
-        try {
-            userService.deleteByUserEmail(email);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("User with email: " + email + " not found",
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
     @PostMapping("/id")
     public ResponseEntity<?> findById(@RequestBody String id) {
         Optional<UserRepresentation> userById = KeycloakUtils.getUserById(id);
@@ -131,18 +116,6 @@ public class AdminController {
         }
 
         return ResponseEntity.ok(userById.get());
-    }
-
-    @PostMapping("/email")
-    public ResponseEntity<?> findByEmail(@RequestBody String email) {
-        User user;
-        try {
-            user = userService.findByEmail(email);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("User with email: " + email + " not found",
-                    HttpStatus.NOT_ACCEPTABLE);
-        }
-        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/search")
